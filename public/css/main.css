@@ -1,0 +1,8 @@
+@font-face {
+    font-family:"Nunito";
+    src: url("../font/NunitoSans-VariableFont_YTLC,opsz,wdth,wght.ttf");
+}
+
+html{
+    scroll-behavior: smooth;
+}
