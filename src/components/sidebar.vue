@@ -3,7 +3,7 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="contacts">
 
         <!-- Sidebar - Brand -->
-        <router-link class="sidebar-brand d-flex align-items-center justify-content-center" to="{name:'landing_page'}">
+        <router-link class="sidebar-brand d-flex align-items-center justify-content-center" to="/new">
             <div class="sidebar-brand-text mx-3">NameͶook</div>
         </router-link>
 

@@ -17,7 +17,10 @@ export default {
             try {
                 img_src = require("../assets/profile/" + this.currentContact.picture);
             }
-            catch {}
+            catch {
+                img_src = "https://namenook.nathan-guilhot.com/img/"+ this.currentContact.picture;
+
+            }
             return img_src;
         }
     },

@@ -18,6 +18,10 @@
                     </select>
 
                 </div>
+                <div class="mt-4">
+                    <label for="nitter_instance">Nitter instance <i>(for Twitter export, must support RSS)</i></label>
+                    <input class="form-control" name="nitter_instance" v-model="$root.user_setting['nitter_instance']">
+                </div>
                 <!-- <a href="#" class="btn btn-primary btn-icon-split btn-lg mt-3">
                     <span class="text"><img :src="loading_icon" alt="loading spinner" width="25" height="25"></span>
                     <span class="text" v-else>Import</span>

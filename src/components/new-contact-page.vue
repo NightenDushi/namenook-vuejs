@@ -13,6 +13,10 @@
                 <span class="icon text-white-50">+</span>
             </a>
             <div class="my-2"></div>
+            <a href="#" class="btn btn-warning btn-icon-split" @click="import_type='Twitter'">
+                <span class="text">Import from Twitter</span>
+            </a>
+            <div class="my-2"></div>
             <a href="#" class="btn btn-success btn-icon-split" @click="import_type='Gravatar (email)'">
                 <span class="text">Import from Gravatar (email)</span>
             </a>
@@ -31,7 +35,16 @@
             <h6 class="m-0 font-weight-bold text-primary">Import from {{import_type}}</h6>
         </div>
         <Transition mode="out-in">
-        <div class="card-body import-option" v-if="import_type=='Gravatar (email)'">
+        <div class="card-body import-option" v-if="import_type=='Twitter'">
+            <p>Enter the Twitter/X handle of the account you want to import<br><i>(exemple : <code>@elonmusk</code>)</i> </p>
+            
+            <div><input type="email" class="form-control" v-model="pTwitterHandle" @keyup.enter="FetchTwitter"></div>
+            <a type="button" href="#" class="btn btn-primary btn-icon-split btn-lg mt-3" @click.prevent="FetchTwitter" :class='{"disable":isTwitterFormInvalid}'>
+                <span class="text" v-if="isFetching"><img :src="loading_icon" alt="loading spinner" width="25" height="25"></span>
+                <span class="text" v-else>Import</span>
+            </a>
+        </div>
+        <div class="card-body import-option" v-else-if="import_type=='Gravatar (email)'">
             <p>Enter the email adresse of the Gravatar account</p>
             
             <div><input type="email" class="form-control" v-model="pGravatarHandle" @keyup.enter="FetchGravatar"></div>
@@ -84,6 +97,7 @@ export default {
             import_type : "",
             pMastodonHandle:"",
             pGravatarHandle:"",
+            pTwitterHandle:"",
             isFetching: false,
             loading_icon: require("../assets/load.gif"),
 
@@ -99,6 +113,9 @@ export default {
         isMastodonFormInvalid(){
             if (this.pMastodonHandle.length<5) return true;
             if (!this.pMastodonHandle.match(/.+@.+\..+$/)) return true;
+            return false;
+        },
+        isTwitterFormInvalid(){
             return false;
         }
     },
@@ -152,7 +169,7 @@ export default {
             }
 
             const contact_id = await this.NewContact(this.blank_contact)
-            const picture_req = await fetch("http://api.nathan-guilhot.com/api/proxy?url="+picture_url);
+            const picture_req = await fetch("https://api.nathan-guilhot.com/api/proxy?url="+picture_url);
             console.log("Fetched!")
             const picture_res = await picture_req.blob();
             console.log("Going to scale")
@@ -178,9 +195,9 @@ export default {
             //TODO(Nighten) Send these fetches in parallel in one promise
             //              Then send the new contact
             //Get the name
-            const profile_fetch = fetch("http://api.nathan-guilhot.com/api/proxy?url="+profile_url);
+            const profile_fetch = fetch("https://api.nathan-guilhot.com/api/proxy?url="+profile_url);
             //Get the avatar
-            const picture_fetch = fetch("http://api.nathan-guilhot.com/api/proxy?url="+avatar_url)
+            const picture_fetch = fetch("https://api.nathan-guilhot.com/api/proxy?url="+avatar_url)
 
             Promise.all([profile_fetch, picture_fetch]).then((datas)=>{
                 const profile_data = datas[0]
@@ -204,12 +221,67 @@ export default {
                             const NewContactId = datas[0];
                             console.log(datas)
                             const PictureData = datas[1];
+                            console.log(PictureData)
                             this.$root.ScaleImageAndUpload(URL.createObjectURL(PictureData), NewContactId)
                         }
                     ).catch((err)=>{alert("Unable to find the profile while parsin json", err); console.log(err); this.isFetching = false;})
                 })
                 .catch((err)=>{alert("Unable to find the profile", err); console.log(err); this.isFetching = false;})
             })
+        },
+        FetchTwitter(){
+            this.isFetching = true;
+
+            if (this.pTwitterHandle.startsWith("@")) this.pTwitterHandle=this.pTwitterHandle.slice(1,this.pTwitterHandle.length)
+            this.pTwitterHandle = this.pTwitterHandle.trim();
+            console.log(this.pTwitterHandle)
+
+            let profile_url = "https://"+this.$root.user_setting["nitter_instance"]+"/"+this.pTwitterHandle+"/rss"
+            const profile_fetch1 = fetch("https://api.nathan-guilhot.com/api/proxy?url="+profile_url);
+            profile_fetch1.then(
+                (res)=>{
+                    console.log(res)
+                    res.text().then((profile_rss)=>{
+                        // profile_url = "https://"+this.$root.user_setting["nitter_instance"]+profile_html1.match("(?<=URL=')[^']*'")
+                        console.log(profile_rss)
+
+                        const profile_picture_re = "(?<=<url>)https:\/\/.*\/pic.*(?=</url>)"
+                        const profile_picture_url = profile_rss.match(profile_picture_re)[0]
+                        const profile_name_re = "(?<=<title>).*(?= /)"
+                        const profile_name = profile_rss.match(profile_name_re)[0]
+
+
+                        let names = profile_name.split(" ");
+                        this.blank_contact.firstname = names[0];
+                        if (names.length>1){
+                            names = names.slice(1);
+                            this.blank_contact.lastname = names.join(" ");
+                        }
+
+                        this.blank_contact.twitter = this.pTwitterHandle
+
+                        const contact_promise = this.NewContact(this.blank_contact);
+                        console.log("profile_picture_url ", profile_picture_url)
+                        const picture_fetch = fetch("https://api.nathan-guilhot.com/api/proxy?url="+profile_picture_url)
+
+                        picture_fetch.then((picture_data)=>{
+                            console.log(picture_data)
+                            const picture_parse_promise = picture_data.blob()
+                            Promise.all([contact_promise, picture_parse_promise]).then(
+                            (datas)=>{
+                                const NewContactId = datas[0];
+                                console.log(datas)
+                                const PictureData = datas[1];
+                                console.log(PictureData)
+                                this.$root.ScaleImageAndUpload(URL.createObjectURL(PictureData), NewContactId)
+                                this.isFetching = false
+                            })
+
+                        })                        
+                    })
+                    // console.log(res)
+                }
+            )
         }
     },
     

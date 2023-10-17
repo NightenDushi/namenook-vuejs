@@ -16,7 +16,8 @@ export default {
             page_id:-1,
             contacts:[],
             user_setting:{
-                "date-format": "en-US"
+                "date-format": "en-US",
+                "nitter_instance": "nitter.d420.de"
             },
             user:useUserStore(),
             user_logged: this.$auth0.isAuthenticated
@@ -44,7 +45,7 @@ export default {
         async get_contacts(pOwnerId) {
             console.log("Fetching contacts...")
             const option = {mode: "cors", credentials: "same-origin"};
-            const res = await fetch("http://api.nathan-guilhot.com/api/contacts?owner_id="+pOwnerId, option);
+            const res = await fetch("https://api.nathan-guilhot.com/api/contacts?owner_id="+pOwnerId, option);
             console.log(res);
             if (res.ok){
                 console.log("Contacts retrieved!");
@@ -55,7 +56,7 @@ export default {
         },
         async send_database(pSource_object) {
             console.log("Sending to the database...",pSource_object)
-            const res = await fetch("http://api.nathan-guilhot.com/api/contacts/"+pSource_object.id, {
+            const res = await fetch("https://api.nathan-guilhot.com/api/contacts/"+pSource_object.id+"?owner_id="+this.$auth0.user?._value?.sub, {
                 method: "PUT",
                 mode: "cors",
                 cache: "no-cache", 
@@ -73,7 +74,7 @@ export default {
         async add_user(pSource_object) {
             const contact = pSource_object;
             console.log("Adding to the database...",contact)
-            const lastContact = await fetch("http://api.nathan-guilhot.com/api/contacts", {
+            const lastContact = await fetch("https://api.nathan-guilhot.com/api/contacts?owner_id="+this.$auth0.user?._value?.sub, {
                 method: "POST",
                 mode: "cors",
                 cache: "no-cache",
@@ -96,8 +97,8 @@ export default {
             return foo;
         },
         async delete_user(pId) {
-            console.log("Adding to the database... ",pId)
-            const res = await fetch("http://api.nathan-guilhot.com/api/contacts/"+pId+"?owner_id=this.$auth0.user?._value?.sub", {
+            console.log("Deleting from the database... ",pId)
+            const res = await fetch("https://api.nathan-guilhot.com/api/contacts/"+pId+"?owner_id="+this.$auth0.user?._value?.sub, {
                 method: "DELETE",
                 mode: "cors",
                 cache: "no-cache",
@@ -116,11 +117,11 @@ export default {
             console.log("Uploading to server...",pContactId, "=",pData)
 
             //NOTE(Nighten) uploading an image give back the whole contact list
-            const foo = fetch("http://api.nathan-guilhot.com/api/upload/"+pContactId+"?owner_id="+this.$auth0.user?._value?.sub, {
+            const foo = fetch("https://api.nathan-guilhot.com/api/upload/"+pContactId+"?owner_id="+this.$auth0.user?._value?.sub, {
                 method: "POST",
                 mode: "cors",
                 cache: "no-cache",
-                credentials: "same-origin", // include, *same-origin, omit
+                credentials: "same-origin",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -142,6 +143,7 @@ export default {
             const filetype="image/jpeg";
             var img = document.createElement("img");
             img.onload = (event)=>{
+                console.log("Image loaded, rescaling...");
                 // Dynamically create a canvas element
                 var canvas = document.createElement("canvas");
 
@@ -168,21 +170,28 @@ export default {
                 this.upload_image({data:dataURI, type:filetype}, pContactId)
                 // document.getElementById("preview").src = dataurl;
             }
-            img.setAttribute('crossorigin', 'anonymous');
-            img.crossOrigin = "anonymous";
+            // img.setAttribute('crossorigin', 'anonymous');
+            // img.crossOrigin = "anonymous";
             img.src = pValue;
+            console.log(img.src)
         },
         async WebFingerResolve(pMastodonHandle){
             let pHandle = pMastodonHandle.trim()
             if (pHandle.startsWith("@")) pHandle=pHandle.slice(1);
             if (pHandle.length<=5) return ""
             const pUrl = pHandle.replace(/^(.*)@(.*)/, "https://$2/.well-known/webfinger?resource=acct:")+pHandle
-
-            const res = await fetch("http://api.nathan-guilhot.com/api/proxy?url="+pUrl);
-            const finalRes = await res.json();
             
-            console.log(finalRes.links);
-            return finalRes.links[0].href;
+            try{
+                const res = await fetch("https://api.nathan-guilhot.com/api/proxy?url="+pUrl);
+                const finalRes = await res.json();
+                
+                console.log(finalRes.links);
+                return finalRes.links[0].href;
+
+            }
+            catch{
+                return false
+            }
 
         }
     }

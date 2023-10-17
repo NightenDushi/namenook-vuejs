@@ -18,7 +18,9 @@ app.use(
       clientId: "qxLFaub7QfL41Ed9xJTYv7SBeNyMVKKB",
       authorizationParams: {
         redirect_uri: window.location.origin
-      }
+      },
+      cacheLocation: 'localstorage',
+      useRefreshTokens: true,
     })
   );
 

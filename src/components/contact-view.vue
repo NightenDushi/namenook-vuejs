@@ -103,28 +103,28 @@ export default {
             }
         },
         contact_display(pFirstName, pLastName) {
-            return pFirstName+" "+pLastName;
+            return this.escapeHtml(pFirstName)+" "+this.escapeHtml(pLastName);
         },
         website_display(pUrl) {
             if (pUrl.length<5) return "🌍 ";
             const pDiplayUrl = pUrl;
-            if (!pUrl.startsWith("https://") || !pUrl.startsWith("http://")) pUrl="https://"+pUrl;
+            if (!pUrl.startsWith("https://") || !pUrl.startsWith("https://")) pUrl="https://"+pUrl;
 
-            return "🌍 <a href='"+pUrl+"' target='_blank'>"+pDiplayUrl+"</a>"
+            return "🌍 <a href='"+this.escapeHtml(pUrl)+"' target='_blank'>"+this.escapeHtml(pDiplayUrl)+"</a>"
         },
         email_display(pMail) {
             if (pMail.length==0) return "✉ ";
-            return "✉ <a href='mailto:"+pMail+"'>"+pMail+"</a>"
+            return "✉ <a href='mailto:"+pMail+"'>"+this.escapeHtml(pMail)+"</a>"
         },
         twitter_display(pHandle) {
             if (pHandle.length==0) return "✖ ";
             if (pHandle.startsWith("@")) pHandle=pHandle.slice(1,pHandle.length)
-            return "✖ <a href='https://twitter.com/"+pHandle+"' target='_blank'>@"+pHandle+"</a>"
+            return "✖ <a href='https://twitter.com/"+this.escapeHtml(pHandle)+"' target='_blank'>@"+this.escapeHtml(pHandle)+"</a>"
         },
         instagram_display(pHandle) {
             if (pHandle.length==0) return "📷 ";
             if (pHandle.startsWith("@")) pHandle=pHandle.slice(1,pHandle.length)
-            return "📷 <a href='https://instagram.com/"+pHandle+"' target='_blank'>@"+pHandle+"</a>"
+            return "📷 <a href='https://instagram.com/"+this.escapeHtml(pHandle)+"' target='_blank'>@"+this.escapeHtml(pHandle)+"</a>"
         },
         mastodon_display(pHandle) {
             if (pHandle.length<=5) return "🐘 ";
@@ -132,10 +132,10 @@ export default {
             // console.log("Hop hop")
             this.$root.WebFingerResolve(pHandle).then((pUrl)=>{
                 // console.log("Webfinger resolved")
-                this.mastodon_fullurl = "🐘 <a href='"+pUrl+"'' target='_blank'>"+pHandle+"</a>"
+                this.mastodon_fullurl = "🐘 <a href='"+pUrl+"'' target='_blank'>"+this.escapeHtml(pHandle)+"</a>"
                 // console.log(this.mastodon_html)
             })
-            return "🐘 "+pHandle
+            return "🐘 "+this.escapeHtml(pHandle)
         },
         date_display(pDateString) {
             if (pDateString.length==0) return "🍰 "
@@ -146,6 +146,14 @@ export default {
         DeleteContact() {
             console.log("Deleting contact...")
             this.$root.delete_user(this.currentContact.id)
+        },
+        escapeHtml(unsafe){
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
     },
     watch:{
