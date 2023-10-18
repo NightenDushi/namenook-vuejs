@@ -19,13 +19,14 @@
 						Keep up with those that matter to you
 					</h3>
 					<p class="text-center">
-						Namenook is a complete <i>CRUD application</i> built with <b>VueJS</b>, <b>NodeJS</b> and <b>Express</b> and <b>fully deployed</b> on a Debian server. It features full authentification and authorization, database, file upload and web crawling.
+						Namenook is a complete <i>CRUD application</i> built with <b>VueJS</b>, <b>NodeJS</b> and <b>Express</b> and <b>fully deployed</b> on a Nginx server with SSL certificate. It features full authentification and authorization, database, file upload and web crawling.
 					</p>
-					<div class="d-flex justify-content-center mb-3">
+					<div class="d-flex justify-content-center align-items-center mb-3">
 						<img class="img-fluid icon" alt="VueJs' logo" :src="require('../assets/logo/vuejs.svg')" style="height:40px;">
 						<img class="img-fluid icon" alt="NodeJs' logo" :src="require('../assets/logo/node.svg')">
 						<img class="img-fluid icon" alt="Auth0's logo" :src="require('../assets/img/Auth0.svg')">
 						<img class="img-fluid icon" alt="SQLite's logo" :src="require('../assets/logo/sqlite.svg')">
+						<img class="img-fluid icon" alt="Nginx's logo" :src="require('../assets/logo/nginx.svg')" style="height:25px;">
 					</div>
                     <a class="btn btn-primary mb-1" @click.prevent="$root.LOGINUSER()">Start now</a>
                     <a class="btn btn-secondary" href="#crud">Read about the project</a>
