@@ -128,7 +128,7 @@
 			<nav>
 				<ol class="breadcrumb d-flex justify-content-between">
 					<ul class="nav">
-						<li class="nav-item"><a class="nav-link" href="https://github.com/NightenDushi" target="_blank">Github</a></li>
+						<li class="nav-item"><a class="nav-link" href="https://github.com/NightenDushi/namenook-vuejs" target="_blank">Github</a></li>
 						<li class="nav-item"><a class="nav-link" href="https://nathan-guilhot.com" target="_blank">Portfolio</a></li>
 					</ul>
 					<div class="nav-link">
