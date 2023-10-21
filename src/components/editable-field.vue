@@ -18,10 +18,10 @@
                         <!--<a href="#" @click.prevent="toggle_edit(source_object)">back</a>-->
                     </span>
                 </div>
-                <div class="col mr-2 d-flex justify-content-between align-items-baseline" v-else>
-                    <h1 class="h3 mb-0 text-gray-800 d-md-inline-block" v-html="displayTitle"></h1>
-                    <span class="col-auto">
-                        <a href="#" @click.prevent="edit_mode=true" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" tabindex="0">edit</a>
+                <div class="col row flex-column flex-sm-row mr-2 d-flex justify-content-between align-items-baseline" v-else>
+                    <h1 class="col-auto h3 mb-0 text-gray-800 d-block d-md-inline-block" v-html="displayTitle"></h1>
+                    <span class="col-12 col-sm-auto">
+                        <a href="#" @click.prevent="edit_mode=true" class="d-block d-sm-inline-block btn btn-sm btn-primary shadow-sm mt-3 mt-sm-0" tabindex="0">edit</a>
                         <!--<a href="#" @click.prevent="edit_mode=true">edit</a>-->
                     </span>
                 </div>
