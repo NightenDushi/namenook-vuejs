@@ -21,7 +21,7 @@
 					<p class="text-center">
 						Namenook is a complete <i>CRUD application</i> built with <b>VueJS</b>, <b>NodeJS</b> and <b>Express</b> and <b>fully deployed</b> on a Nginx server with SSL certificate. It features full authentification and authorization, database, file upload and web crawling.
 					</p>
-					<div class="d-flex justify-content-center align-items-center mb-3">
+					<div class="d-flex justify-content-center align-items-center mb-3 flex-wrap">
 						<img class="img-fluid icon" alt="VueJs' logo" :src="require('../assets/logo/vuejs.svg')" style="height:40px;">
 						<img class="img-fluid icon" alt="NodeJs' logo" :src="require('../assets/logo/node.svg')">
 						<img class="img-fluid icon" alt="Auth0's logo" :src="require('../assets/img/Auth0.svg')">
@@ -207,10 +207,4 @@ export default{
 	margin-right:10px;
 	margin-left:10px;
 }
-
-/* video{
-	border-radius: 5%;
-	box-shadow:inset 0px 0px 3px;
-	width:555px; height:484px; 
-} */
 </style>
